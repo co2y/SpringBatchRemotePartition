@@ -15,8 +15,13 @@ import java.util.Map;
 @Component
 public class FilePartitioner implements Partitioner {
 
-    private int getCount() throws IOException {
-        InputStream is = new BufferedInputStream(new FileInputStream("/Users/MacBookPro/SpringBatchRemotePartition/test.txt"));
+    private int getCount() {
+        InputStream is = null;
+        try {
+            is = new BufferedInputStream(new FileInputStream("/Users/MacBookPro/SpringBatchRemotePartition/test.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         int count = 0;
         try {
             byte[] c = new byte[2048];
@@ -27,8 +32,14 @@ public class FilePartitioner implements Partitioner {
                         ++count;
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
-            is.close();
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return count;
     }
@@ -36,13 +47,9 @@ public class FilePartitioner implements Partitioner {
     @Override
     public Map<String, ExecutionContext> partition(int gridSize) {
 
-        int linenum = 0;
+        int linenum;
 
-        try {
-            linenum = getCount();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        linenum = getCount();
 
         Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
 
@@ -50,13 +57,16 @@ public class FilePartitioner implements Partitioner {
         int interval = linenum / gridSize;
         int end = start + interval - 1;
 
-        for (int i = 0; i < gridSize && start < linenum; ++i) {
+        for (int i = 0; i < gridSize && start <= linenum; ++i) {
             ExecutionContext value = new ExecutionContext();
             result.put("partition" + i, value);
 
             if (end > linenum) {
                 end = linenum;
             }
+
+            System.out.println(start);
+            System.out.println(end);
 
             value.putInt("currentIndex", start);
             value.putInt("partitionEnd", end);

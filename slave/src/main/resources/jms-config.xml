@@ -9,16 +9,16 @@
 
     <util:map id="jndiProperties" map-class="java.util.Properties">
         <entry key="java.naming.factory.initial"
-               value="org.jnp.interfaces.NamingContextFactory"/>
+               value="org.jnp.interfaces.NamingContextFactory" />
         <entry key="java.naming.factory.url.pkgs"
-               value="org.jboss.naming:org.jnp.interfaces"/>
-        <entry key="java.naming.provider.url" value="${jnp.provider.url}"/>
+               value="org.jboss.naming:org.jnp.interfaces" />
+        <entry key="java.naming.provider.url" value="${jnp.provider.url}" />
     </util:map>
 
     <jee:jndi-lookup id="connectionFactory" jndi-name="/ConnectionFactory"
-                     environment-ref="jndiProperties"/>
+                     environment-ref="jndiProperties" />
     <jee:jndi-lookup id="masterCommands" jndi-name="/queue/MasterCommands2"
-                     environment-ref="jndiProperties"/>
+                     environment-ref="jndiProperties" />
     <jee:jndi-lookup id="slaveResponses" jndi-name="/queue/SlaveResponses2"
-                     environment-ref="jndiProperties"/>
+                     environment-ref="jndiProperties" />
 </beans>

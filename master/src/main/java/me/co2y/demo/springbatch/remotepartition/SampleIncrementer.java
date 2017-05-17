@@ -11,9 +11,9 @@ public class SampleIncrementer implements JobParametersIncrementer {
     @Override
     public JobParameters getNext(JobParameters parameters) {
         if (parameters == null || parameters.isEmpty()) {
-            return new JobParametersBuilder().addLong("run.id", 1024L).toJobParameters();
+            return new JobParametersBuilder().addLong("run.id", 32L).toJobParameters();
         }
-        long id = parameters.getLong("run.id", 1L) + 1;
+        long id = parameters.getLong("run.id", 32L) + 1;
         return new JobParametersBuilder().addLong("run.id", id).toJobParameters();
     }
 }
