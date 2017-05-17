@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-jms="http://www.springframework.org/schema/integration/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/integration/jms
+    http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd
+    http://www.springframework.org/schema/integration
+    http://www.springframework.org/schema/integration/spring-integration.xsd">
+
+    <import resource="classpath:jms-config.xml"/>
+    <context:property-placeholder location="classpath:application.properties"/>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="url" value="${batch.jdbc.url}"/>
+        <property name="username" value="${batch.jdbc.user}"/>
+        <property name="password" value="${batch.jdbc.password}"/>
+    </bean>
+
+    <bean id="SampleIncrementer" class="me.co2y.demo.springbatch.remotepartition.SampleIncrementer"/>
+
+    <batch:job id="masterJob" incrementer="SampleIncrementer">
+        <batch:step id="masterStep">
+            <batch:partition partitioner="partitioner" handler="partitionHandler"/>
+        </batch:step>
+    </batch:job>
+
+    <bean id="partitioner" class="me.co2y.demo.springbatch.remotepartition.FilePartitioner"/>
+
+    <bean id="partitionHandler"
+          class="org.springframework.batch.integration.partition.MessageChannelPartitionHandler">
+        <property name="stepName" value="slaveStep"/>
+        <property name="replyChannel" ref="inMasterAggregatedChannel"/>
+        <property name="gridSize" value="5"/>
+        <property name="messagingOperations" ref="messagingTemplate">
+        </property>
+    </bean>
+
+    <bean id="messagingTemplate" class="org.springframework.integration.core.MessagingTemplate">
+        <property name="defaultChannel" ref="outMasterAdapter"/>
+        <property name="receiveTimeout" value="60000"/>
+    </bean>
+
+    <int-jms:outbound-channel-adapter id="outMasterAdapter"
+                                      destination="masterCommands"/>
+
+    <int:channel id="inMasterChannel"/>
+    <int-jms:message-driven-channel-adapter
+            id="inMasterAdapter" destination="slaveResponses" channel="inMasterChannel"/>
+
+    <int:channel id="inMasterAggregatedChannel">
+        <int:queue/>
+    </int:channel>
+    <int:aggregator ref="partitionHandler" input-channel="inMasterChannel"
+                    output-channel="inMasterAggregatedChannel"/>
+</beans>
