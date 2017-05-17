@@ -2,6 +2,8 @@ package me.co2y.demo.springbatch.remotepartition;
 
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.List;
 
 /**
@@ -9,7 +11,24 @@ import java.util.List;
  */
 @Repository
 public class SlaveWriterRepository {
-    public void write(List<? extends String> list) {
-        list.stream().map(record -> "Writing record: " + record).forEach(System.out::println);
+    private final String writeFilePath = "/Users/MacBookPro/SpringBatchRemotePartition/test.txt";
+
+    public void write(List<? extends Text> list) {
+        String fileName = writeFilePath + list.get(0).getPartitionId();
+        StringBuilder sb = new StringBuilder();
+        for (Text text : list) {
+            sb.append(text.getLine());
+            sb.append("\n");
+        }
+        try {
+            RandomAccessFile randomFile = new RandomAccessFile(fileName, "rw");
+            long fileLength = randomFile.length();
+            randomFile.seek(fileLength);
+            randomFile.writeBytes(sb.toString());
+            randomFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

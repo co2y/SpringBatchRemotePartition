@@ -7,12 +7,13 @@ import org.springframework.stereotype.Component;
  * Created by co2y on 17/05/2017.
  */
 @Component
-public class SlaveProcessor implements ItemProcessor<String, String> {
+public class SlaveProcessor implements ItemProcessor<Text, Text> {
     public SlaveProcessor() {
     }
 
     @Override
-    public String process(String item) {
-        return item + " processed";
+    public Text process(Text item) {
+        item.setLine(item.getLine() + " processed");
+        return item;
     }
 }

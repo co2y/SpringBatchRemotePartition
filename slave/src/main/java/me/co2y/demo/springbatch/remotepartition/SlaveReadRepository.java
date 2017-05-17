@@ -33,7 +33,6 @@ public class SlaveReadRepository {
                 e.printStackTrace();
             }
             if (lines == num) {
-
                 break;
             }
         }
@@ -44,6 +43,6 @@ public class SlaveReadRepository {
             e.printStackTrace();
         }
 
-        return s;
+        return s.equals("") ? null : s;
     }
 }

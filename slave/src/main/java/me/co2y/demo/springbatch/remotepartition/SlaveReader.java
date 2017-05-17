@@ -12,7 +12,7 @@ import java.io.IOException;
  * Created by co2y on 17/05/2017.
  */
 @Component
-public class SlaveReader implements ItemReader<String> {
+public class SlaveReader implements ItemReader<Text> {
     private SlaveReadRepository readRepository;
     private ExecutionContext executionContext;
     private int partitionEnd;
@@ -30,9 +30,13 @@ public class SlaveReader implements ItemReader<String> {
     }
 
     @Override
-    public String read(){
+    public Text read() {
         int currentIndex = executionContext.getInt("currentIndex");
-        String item = (currentIndex <= partitionEnd) ? currentIndex+"" : null;
+        Text item = new Text();
+        String content = (currentIndex <= partitionEnd) ? readRepository.getLine(currentIndex) : null;
+        if (content == null) return null;
+        item.setLine(content);
+        item.setPartitionId(executionContext.getInt("partitionId"));
         executionContext.putInt("currentIndex", currentIndex + 1);
         return item;
     }

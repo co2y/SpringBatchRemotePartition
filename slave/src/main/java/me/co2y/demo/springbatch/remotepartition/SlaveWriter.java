@@ -10,7 +10,7 @@ import java.util.List;
  * Created by co2y on 17/05/2017.
  */
 @Component
-public class SlaveWriter implements ItemWriter<String> {
+public class SlaveWriter implements ItemWriter<Text> {
     private SlaveWriterRepository writerRepository;
 
     @Autowired
@@ -20,7 +20,7 @@ public class SlaveWriter implements ItemWriter<String> {
     }
 
     @Override
-    public void write(List<? extends String> list) {
+    public void write(List<? extends Text> list) {
 
         writerRepository.write(list);
     }

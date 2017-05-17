@@ -70,6 +70,7 @@ public class FilePartitioner implements Partitioner {
 
             value.putInt("currentIndex", start);
             value.putInt("partitionEnd", end);
+            value.putInt("partitionId", i);
 
             start += interval;
             end += interval;
