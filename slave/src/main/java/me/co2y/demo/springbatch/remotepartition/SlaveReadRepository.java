@@ -21,6 +21,7 @@ public class SlaveReadRepository {
     public synchronized String getNextLine(int currentIndex, int endIndex) {
         String s = null;
 
+        // 每个parition对应一个SlaveReadRepository实例
         if (in == null) {
             try {
                 in = new FileReader(filePath);
