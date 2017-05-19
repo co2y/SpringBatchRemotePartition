@@ -18,7 +18,7 @@ public class FilePartitioner implements Partitioner {
     private int getCount() {
         InputStream is = null;
         try {
-            is = new BufferedInputStream(new FileInputStream("/Users/MacBookPro/SpringBatchRemotePartition/test.txt"));
+            is = new BufferedInputStream(new FileInputStream("/Users/MacBookPro/SpringBatchRemotePartition/test.in"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

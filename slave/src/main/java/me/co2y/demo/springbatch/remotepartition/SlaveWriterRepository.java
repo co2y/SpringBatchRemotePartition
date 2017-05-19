@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Repository
 public class SlaveWriterRepository {
-    private final String writeFilePath = "/Users/MacBookPro/SpringBatchRemotePartition/test.txt";
+    private final String writeFilePath = "/Users/MacBookPro/SpringBatchRemotePartition/test.out";
 
     public void write(List<? extends Text> list) {
         String fileName = writeFilePath + list.get(0).getPartitionId();

@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @ImportResource("classpath:master-config.xml")
 public class MasterApplication {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         SpringApplication.run(MasterApplication.class);
     }
 }

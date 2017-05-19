@@ -33,7 +33,7 @@ public class SlaveReader implements ItemReader<Text> {
     public Text read() {
         int currentIndex = executionContext.getInt("currentIndex");
         Text item = new Text();
-        String content = (currentIndex <= partitionEnd) ? readRepository.getLine(currentIndex) : null;
+        String content = (currentIndex <= partitionEnd) ? readRepository.getNextLine(currentIndex, partitionEnd) : null;
         if (content == null) return null;
         item.setLine(content);
         item.setPartitionId(executionContext.getInt("partitionId"));
