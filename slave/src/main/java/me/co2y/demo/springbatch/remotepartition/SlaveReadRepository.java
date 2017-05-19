@@ -35,19 +35,8 @@ public class SlaveReadRepository {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (lines != currentIndex) {
-                while (s != null) {
-                    try {
-                        s = reader.readLine();
-                        lines++;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if (lines == currentIndex) {
-                        break;
-                    }
-                }
-            }
+            s = readLine(s, currentIndex);
+
 
         } else {
             try {
@@ -56,6 +45,9 @@ public class SlaveReadRepository {
 
                 lines++;
             } catch (IOException e) {
+                // reader已关闭，无法判断reader是否关闭，只能处理异常。
+                // 重新打开一个reader，相当于每个partition都读了一遍文件
+                
                 lines = 0;
                 try {
                     in = new FileReader(filePath);
@@ -69,22 +61,7 @@ public class SlaveReadRepository {
                 } catch (IOException e2) {
                     e.printStackTrace();
                 }
-                if (lines != currentIndex) {
-                    while (s != null) {
-                        try {
-                            s = reader.readLine();
-                            lines++;
-                        } catch (IOException e3) {
-                            e.printStackTrace();
-                        }
-                        if (lines == currentIndex) {
-                            System.out.println(lines + s);
-                            break;
-                        }
-                    }
-                }
-
-
+                s = readLine(s, currentIndex);
             }
         }
 
@@ -97,6 +74,23 @@ public class SlaveReadRepository {
             }
         }
 
+        return s;
+    }
+
+    private String readLine(String s, int currentIndex) {
+        if (lines != currentIndex) {
+            while (s != null) {
+                try {
+                    s = reader.readLine();
+                    lines++;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (lines == currentIndex) {
+                    break;
+                }
+            }
+        }
         return s;
     }
 }
