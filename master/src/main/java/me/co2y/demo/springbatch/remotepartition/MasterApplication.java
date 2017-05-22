@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication
 @EnableBatchProcessing
-@EnableScheduling
 @ImportResource("classpath:master-config.xml")
 public class MasterApplication {
     public static void main(String[] args) {
